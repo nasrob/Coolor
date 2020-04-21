@@ -41,9 +41,11 @@ function generateHex() {
 
 /** generates random colors at doc ready */
 function randomColors() {
+    initialColors = []; // reset on each page refrech
     colorDivs.forEach((div, index) => {
         const hexText = div.children[0]; // get the h2 of the div
         const randomColor = generateHex();
+        initialColors.push(chroma(randomColor).hex());
         // add the color to the div background
         div.style.backgroundColor = randomColor;
         hexText.innerText = randomColor;
@@ -97,7 +99,7 @@ function hslControls(event) {
     const brightness = sliders[1];
     const saturation = sliders[2];
 
-    const bgColor = colorDivs[index].querySelector('h2').innerText;
+    const bgColor = initialColors[index]; // the color reference on which the change will occur
     let color = chroma(bgColor)
         .set('hsl.s', saturation.value)
         .set('hsl.l', brightness.value)
