@@ -5,6 +5,11 @@ const sliders = document.querySelectorAll('input[type="range"]'); // selecting c
 const currentHexes = document.querySelectorAll('.color h2'); // select the h2 inside div of class color
 let initialColors;
 
+// Event Listeners
+sliders.forEach(slider => {
+    slider.addEventListener('input', hslControls);
+})
+
 
 // Functions
 
@@ -78,5 +83,22 @@ function colorizeSliders(color, hueSlider, brightSlider, saturationSlider) {
     hueSlider.style.backgroundImage = `linear-gradient(to right, rgb(204,75,75),rgb(204,204,75),rgb(75,204,75),rgb(75,204,204),rgb(75,75,204),rgb(204,75,204),rgb(204,75,75))`;
 
 }
+
+function hslControls(event) {
+    const index = event.target.getAttribute('data-bright') || event.target.getAttribute('data-sat') || event.target.getAttribute('data-hue');
+    let sliders = event.target.parentElement.querySelectorAll('input[type="range"]');
+    const hue = sliders[0];
+    const brightness = sliders[1];
+    const saturation = sliders[2];
+
+    const bgColor = colorDivs[index].querySelector('h2').innerText;
+    let color = chroma(bgColor)
+        .set('hsl.s', saturation.value)
+        .set('hsl.l', brightness.value)
+        .set('hsl.h', hue.value);
+    // console.log(color);
+    colorDivs[index].style.backgroundColor = color;
+}
+
 
 randomColors();
