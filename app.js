@@ -37,6 +37,16 @@ function randomColors() {
         div.style.backgroundColor = randomColor;
         hexText.innerText = randomColor;
         checkTextContrast(randomColor, hexText);
+        // Initialize sliders colors
+        const color = chroma(randomColor);
+        const sliders = div.querySelectorAll('.sliders input');
+        const hueSlider = sliders[0];
+        const brightSlider = sliders[1];
+        const saturationSlider = sliders[2];
+        // console.log(saturationSlider);
+
+        colorizeSliders(color, hueSlider, brightSlider, saturationSlider);
+
     });
 }
 
@@ -48,6 +58,25 @@ function checkTextContrast(color, text) {
     } else {
         text.style.color = 'white';
     }
+}
+
+function colorizeSliders(color, hueSlider, brightSlider, saturationSlider) {
+    // Scale Saturation
+    const noSaturation = color.set('hsl.s', 0); // deaturate a color
+    const fullSaturation = color.set('hsl.s', 1); // max saturation
+    const saturationScale = chroma.scale([noSaturation, color, fullSaturation]);
+
+    // Brightness Scale: it goes from black to white, we just need the mid bright using chroma 
+    const midBright = color.set('hsl.l', 0.5);
+    const brightScale = chroma.scale(['black', midBright, 'white']);
+
+
+    // Update Input Colors (the slider)
+    saturationSlider.style.backgroundImage = `linear-gradient(to right, ${saturationScale(0)}, ${saturationScale(1)})`;
+    brightSlider.style.backgroundImage = `linear-gradient(to right,  ${brightScale(0)}, ${brightScale(0.5)}, ${brightScale(1)})`;
+    // for hue slider it ranges between the basic colors here in rgb values
+    hueSlider.style.backgroundImage = `linear-gradient(to right, rgb(204,75,75),rgb(204,204,75),rgb(75,204,75),rgb(75,204,204),rgb(75,75,204),rgb(204,75,204),rgb(204,75,75))`;
+
 }
 
 randomColors();
