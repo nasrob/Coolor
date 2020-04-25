@@ -3,7 +3,10 @@ const colorDivs = document.querySelectorAll(".color");
 const generateBtn = document.querySelector("generate");
 const sliders = document.querySelectorAll('input[type="range"]'); // selecting certain type of inputs
 const currentHexes = document.querySelectorAll(".color h2"); // select the h2 inside div of class color
-const popupContainer = document.querySelector('.copy-container')
+const popupContainer = document.querySelector('.copy-container');
+const adjsutButtons = document.querySelectorAll('.adjust');
+const closeAdjustments = document.querySelectorAll('.close-adjustment');
+const sliderContainers = document.querySelectorAll('.sliders');
 
 let initialColors;
 
@@ -30,6 +33,19 @@ popupContainer.addEventListener('transitionend', () => {
     popupContainer.classList.remove('active');
     popupBox.classList.remove('active');
 });
+
+adjsutButtons.forEach((button, index) => {
+    button.addEventListener('click', () => {
+        openAdjustmentPanel(index);
+    });
+});
+
+closeAdjustments.forEach((button, index) => {
+    button.addEventListener('click', () => {
+        closeAdjustmentPanel(index);
+    });
+});
+
 // Functions
 
 /*
@@ -169,6 +185,14 @@ function copyToClipBoard(hex) {
     popupContainer.classList.add('active');
 
     // console.log(popup);
+}
+
+function openAdjustmentPanel(index) {
+    sliderContainers[index].classList.toggle('active');
+}
+
+function closeAdjustmentPanel(index) {
+    sliderContainers[index].classList.remove('active');
 }
 
 
