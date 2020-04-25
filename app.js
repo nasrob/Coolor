@@ -11,6 +11,9 @@ const lockButtons = document.querySelectorAll('.lock');
 
 let initialColors;
 
+// saving in local storage
+let savedPalettes = [];
+
 // Event Listeners
 
 generateBtn.addEventListener('click', randomColors);
@@ -77,7 +80,15 @@ function randomColors() {
     colorDivs.forEach((div, index) => {
         const hexText = div.children[0]; // get the h2 of the div
         const randomColor = generateHex();
-        initialColors.push(chroma(randomColor).hex());
+
+        if (div.classList.contains('locked')) {
+            initialColors.push(hexText.innerText); // keeping the previous values if lock active
+            console.log('IF LOCKED');
+            return; // don't continue the fonction execution
+        } else {
+            initialColors.push(chroma(randomColor).hex());
+        }
+
         // add the color to the div background
         div.style.backgroundColor = randomColor;
         hexText.innerText = randomColor;
@@ -206,5 +217,62 @@ function closeAdjustmentPanel(index) {
     sliderContainers[index].classList.remove('active');
 }
 
+
+// Save Palettes in local Storage
+const saveBtn = document.querySelector('.save');
+const submitSave = document.querySelector('.submit-save');
+const closeSave = document.querySelector('.close-save');
+const saveContainer = document.querySelector('.save-container');
+const saveInput = document.querySelector('.save-container input');
+
+saveBtn.addEventListener('click', openPalette);
+closeSave.addEventListener('click', closePalette);
+submitSave.addEventListener('click', savePalette);
+
+function openPalette(event) {
+    const popup = saveContainer.children[0];
+    saveContainer.classList.add('active');
+    popup.classList.add('active');
+}
+
+function closePalette(event) {
+    const popup = saveContainer.children[0];
+    saveContainer.classList.remove('active');
+    popup.classList.remove('active');
+}
+
+function savePalette(event) {
+    const popup = saveContainer.children[0];
+    saveContainer.classList.remove('active');
+    popup.classList.remove('active');
+    const name = saveInput.value;
+    const colors = [];
+    currentHexes.forEach(hex => {
+        colors.push(hex.innerText);
+    });
+    // generate palette object
+    let paletteNbmr = savedPalettes.length;
+    const paletteObj = {
+        name,
+        colors,
+        number: paletteNbmr
+    };
+    savedPalettes.push(paletteObj);
+    // saving in local storage
+    saveToLocal(paletteObj);
+    saveInput.value = '';
+    // console.log(savedPalettes);
+}
+
+function saveToLocal(paletteObj) {
+    let localPalettes;
+    if (localStorage.getItem('palettes') === null) {
+        localPalettes = [];
+    } else {
+        localPalettes = JSON.parse(localStorage.getItem('palettes'));
+    }
+    localPalettes.push(paletteObj);
+    localStorage.setItem('palettes', JSON.stringify(localPalettes));
+}
 
 randomColors();
