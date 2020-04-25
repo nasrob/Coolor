@@ -3,6 +3,8 @@ const colorDivs = document.querySelectorAll(".color");
 const generateBtn = document.querySelector("generate");
 const sliders = document.querySelectorAll('input[type="range"]'); // selecting certain type of inputs
 const currentHexes = document.querySelectorAll(".color h2"); // select the h2 inside div of class color
+const popupContainer = document.querySelector('.copy-container')
+
 let initialColors;
 
 // Event Listeners
@@ -17,6 +19,17 @@ colorDivs.forEach((div, index) => {
     });
 });
 
+currentHexes.forEach(hex => {
+    hex.addEventListener('click', () => { // arrow function to be able to pass hex as param 
+        copyToClipBoard(hex);
+    });
+});
+
+popupContainer.addEventListener('transitionend', () => {
+    const popupBox = popupContainer.children[0];
+    popupContainer.classList.remove('active');
+    popupBox.classList.remove('active');
+});
 // Functions
 
 /*
@@ -142,5 +155,21 @@ function resetInputs() {
         }
     });
 }
+
+function copyToClipBoard(hex) {
+    const textArea = document.createElement('textarea');
+    textArea.value = hex.innerText;
+    document.body.appendChild(textArea);
+    textArea.select();
+    document.execCommand('copy');
+    document.body.removeChild(textArea);
+    // popup animation
+    const popupBox = popupContainer.children[0];
+    popupBox.classList.add('active');
+    popupContainer.classList.add('active');
+
+    // console.log(popup);
+}
+
 
 randomColors();
