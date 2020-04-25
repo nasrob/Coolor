@@ -1,16 +1,20 @@
 // Global Selections and variables
 const colorDivs = document.querySelectorAll(".color");
-const generateBtn = document.querySelector("generate");
+const generateBtn = document.querySelector(".generate");
 const sliders = document.querySelectorAll('input[type="range"]'); // selecting certain type of inputs
 const currentHexes = document.querySelectorAll(".color h2"); // select the h2 inside div of class color
 const popupContainer = document.querySelector('.copy-container');
 const adjsutButtons = document.querySelectorAll('.adjust');
 const closeAdjustments = document.querySelectorAll('.close-adjustment');
 const sliderContainers = document.querySelectorAll('.sliders');
+const lockButtons = document.querySelectorAll('.lock');
 
 let initialColors;
 
 // Event Listeners
+
+generateBtn.addEventListener('click', randomColors);
+
 sliders.forEach((slider) => {
     slider.addEventListener("input", hslControls);
 });
@@ -89,6 +93,13 @@ function randomColors() {
         colorizeSliders(color, hueSlider, brightSlider, saturationSlider);
     });
     resetInputs();
+
+    // check buttons contrast
+    adjsutButtons.forEach((button, index) => {
+        checkTextContrast(initialColors[index], button); // params : the generated color and the adjustbutton
+        checkTextContrast(initialColors[index], lockButtons[index]); // second param : lock button of the div
+    })
+
 }
 
 /**ckeck for contrast and adapt the text color */
