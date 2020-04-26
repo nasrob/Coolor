@@ -53,6 +53,11 @@ closeAdjustments.forEach((button, index) => {
     });
 });
 
+lockButtons.forEach((button, index) => {
+    button.addEventListener('click', event => {
+        lockLayer(event, index);
+    });
+})
 // Functions
 
 /*
@@ -83,7 +88,6 @@ function randomColors() {
 
         if (div.classList.contains('locked')) {
             initialColors.push(hexText.innerText); // keeping the previous values if lock active
-            console.log('IF LOCKED');
             return; // don't continue the fonction execution
         } else {
             initialColors.push(chroma(randomColor).hex());
@@ -255,7 +259,14 @@ function savePalette(event) {
         colors.push(hex.innerText);
     });
     // generate palette object
-    let paletteNbmr = savedPalettes.length;
+    let paletteNbmr;
+    const paletteObjects = JSON.parse(localStorage.getItem('palettes'));
+    if (paletteObjects) {
+        paletteNbmr = paletteObjects.length;
+    } else {
+        paletteNbmr = savedPalettes.length;
+    }
+
     const paletteObj = {
         name,
         colors,
@@ -328,12 +339,26 @@ function closeLibraryPopUp(event) {
     popup.classList.remove('active');
 }
 
+function lockLayer(event, index) {
+    const lockSVG = event.target.children[0];
+    const activeBg = colorDivs[index];
+    activeBg.classList.toggle('locked');
+
+    if (lockSVG.classList.contains('fa-lock-open')) {
+        event.target.innerHTML = '<i class="fas fa-lock"></i>';
+    } else {
+        event.target.innerHTML = '<i class="fas fa-lock-open"></i>';
+    }
+}
+
 function getColorsFromLocal() {
     // let localPalettes;
     if (localStorage.getItem('palettes') === null) {
-        localStorage = [];
+        localPalettes = [];
     } else {
         const paletteObjcts = JSON.parse(localStorage.getItem('palettes'));
+        savedPalettes = [...paletteObjects]; // copy palettes form localstorage to savedPalettes
+
         paletteObjcts.forEach(paletteObj => {
             // generate palette for Library
             const palette = document.createElement('div');
@@ -376,8 +401,6 @@ function getColorsFromLocal() {
 
     }
 }
-
-localStorage.clear();
 
 getColorsFromLocal();
 randomColors();
